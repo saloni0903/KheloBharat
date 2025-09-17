@@ -17,10 +17,9 @@ df = load_data()
 st.subheader("Latest Jump Results")
 st.dataframe(df)
 
-# Add filtering logic and a new column for video proof
-st.subheader("Results with Video Proof")
 if not df.empty:
-    df_with_proof = df[['athlete_id', 'jump_count', 'proof_clip_url']]
+    st.subheader("Results with Video Proof")
+    df_with_proof = df.copy()
     st.data_editor(
         df_with_proof,
         column_config={

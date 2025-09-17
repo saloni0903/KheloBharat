@@ -10,7 +10,7 @@ class JumpResult(BaseModel):
     athlete_id: str
     test_type: str
     jump_count: int
-    proof_clip_url: str # New field
+    proof_clip_url: str
 
 DB_FILE = "results_db.csv"
 if not os.path.exists(DB_FILE):
@@ -21,12 +21,7 @@ if not os.path.exists(DB_FILE):
 def submit_result(result: JumpResult):
     try:
         df = pd.read_csv(DB_FILE)
-        new_row = pd.DataFrame([{
-            "athlete_id": result.athlete_id,
-            "test_type": result.test_type,
-            "jump_count": result.jump_count,
-            "proof_clip_url": result.proof_clip_url
-        }])
+        new_row = pd.DataFrame([result.dict()])
         df = pd.concat([df, new_row], ignore_index=True)
         df.to_csv(DB_FILE, index=False)
         return {"status": "success", "message": "Jump count submitted."}
