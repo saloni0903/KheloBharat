@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  // Use 10.0.2.2 for Android Emulator, or your local IP for a physical device.
-  final String _baseUrl = 'http://10.0.2.2:8000';
+  final String _baseUrl = 'http://10.0.2.2:8000'; // For Android Emulator
 
-  Future<bool> submitJumpCount({
+  Future<bool> submitResult({
     required String athleteId,
+    required String testType,
     required int jumpCount,
     required String proofClipUrl,
   }) async {
@@ -18,11 +18,13 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'athlete_id': athleteId,
-          'test_type': 'Vertical Jump',
+          'test_type': testType,
           'jump_count': jumpCount,
           'proof_clip_url': proofClipUrl,
         }),
       );
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
       return response.statusCode == 200;
     } catch (e) {
       print('API call failed: $e');
@@ -30,12 +32,12 @@ class ApiService {
     }
   }
 
-  // NOTE: In a real-world scenario, you would upload the file to a service like AWS S3 or Firebase Storage.
-  // This function is a placeholder for that logic.
   Future<String> uploadProofClip(File clipFile) async {
-    // Simulating a successful upload to a dummy URL.
+    print('Simulating proof clip upload...');
     await Future.delayed(const Duration(seconds: 2));
     final timestamp = DateTime.now().millisecondsSinceEpoch;
-    return 'https://your-storage-service.com/clips/athlete_${timestamp}.mp4';
+    final dummyUrl = 'https://your-storage-service.com/clips/athlete_$timestamp.mp4';
+    print('Simulated upload complete. URL: $dummyUrl');
+    return dummyUrl;
   }
 }

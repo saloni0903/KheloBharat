@@ -3,8 +3,17 @@ from pydantic import BaseModel
 import pandas as pd
 import uvicorn
 import os
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Allows all origins for mobile app testing
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class JumpResult(BaseModel):
     athlete_id: str
@@ -24,7 +33,7 @@ def submit_result(result: JumpResult):
         new_row = pd.DataFrame([result.dict()])
         df = pd.concat([df, new_row], ignore_index=True)
         df.to_csv(DB_FILE, index=False)
-        return {"status": "success", "message": "Jump count submitted."}
+        return {"status": "success", "message": "Result submitted."}
     except Exception as e:
         return {"status": "error", "message": str(e)}
 

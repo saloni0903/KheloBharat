@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import plotly.express as px
 
 st.set_page_config(layout="wide")
 st.title("SAI Sports Assessment Dashboard")
@@ -14,18 +15,25 @@ def load_data():
 
 df = load_data()
 
-st.subheader("Latest Jump Results")
-st.dataframe(df)
-
+st.header("Latest Jump Results")
 if not df.empty:
-    st.subheader("Results with Video Proof")
-    df_with_proof = df.copy()
+    st.dataframe(df.tail(5).sort_index(ascending=False))
+    
+    st.header("All Test Results")
     st.data_editor(
-        df_with_proof,
+        df,
         column_config={
             "proof_clip_url": st.column_config.LinkColumn("Video Proof"),
         },
         hide_index=True,
     )
+
+    st.header("Analytics")
+    avg_jump = df['jump_count'].mean()
+    st.metric("Average Jump Count", f"{avg_jump:.2f}")
+
+    if len(df) > 1:
+        fig = px.line(df, x=df.index, y="jump_count", title="Jump Count Over Time")
+        st.plotly_chart(fig)
 else:
-    st.write("No results to display.")
+    st.write("No results to display yet.")
